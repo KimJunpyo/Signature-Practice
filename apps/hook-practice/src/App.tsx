@@ -1,35 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useReducer, useState } from "react";
+import "./App.css";
+
+interface Product {
+  name: string;
+  price: number | null;
+}
+
+type Action = {
+  type: "create" | "update";
+  payload: Product;
+  id?: number;
+};
+
+const MockProductItem = {
+  name: "mock",
+  price: 100,
+};
+
+const InitProductItem = {
+  name: "",
+  price: null,
+};
+
+const reducer = (state: Product[], action: Action) => {
+  switch (action.type) {
+    case "create":
+      return [...state, action.payload];
+    case "update":
+      return state.map((p, i) => (i === action.id ? action.payload : p));
+    default:
+      throw new Error(`Invalid action type ${action.type}`);
+  }
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [product, setProduct] = useState<Product>(InitProductItem);
+  const [state, dispatch] = useReducer(reducer, []);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ul>
+        {state.map((product, idx) => (
+          <li key={idx}>
+            {product.name}: {product.price}
+            <button
+              onClick={() =>
+                dispatch({ type: "update", payload: MockProductItem, id: idx })
+              }
+            >
+              update
+            </button>
+          </li>
+        ))}
+      </ul>
+      <input
+        name="productName"
+        value={product?.name || ""}
+        onChange={(e) => {
+          if (e.target.value) {
+            setProduct((prevState) => {
+              if (prevState) {
+                return {
+                  ...prevState,
+                  name: e.target.value,
+                };
+              }
+              return {
+                name: e.target.value,
+                price: 0,
+              };
+            });
+          }
+        }}
+      />
+      <button onClick={() => dispatch({ type: "create", payload: product })}>
+        create
+      </button>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
