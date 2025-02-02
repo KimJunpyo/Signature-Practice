@@ -1,0 +1,11 @@
+body {
+  background-color: black;
+  padding: 16px;
+  color: white;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
