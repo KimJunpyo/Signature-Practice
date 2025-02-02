@@ -3,10 +3,17 @@
   gap: 12px;
   align-items: center;
   padding: 12px;
-  border-bottom: 1px solid #ccc;
 }
 
 .todo-item p {
+  flex-grow: 1;
+}
+
+.todo-item p.completed {
+  text-decoration: line-through;
+}
+
+.todo-item .edit {
   flex-grow: 1;
 }
 

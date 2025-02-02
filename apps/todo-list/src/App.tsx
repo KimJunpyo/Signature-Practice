@@ -12,7 +12,10 @@ export interface TodoItemType {
 
 function App() {
   const [todoList, setTodoList] = useState<TodoItemType[]>([]);
+  const [filter, setFilter] = useState<"all" | "todo" | "done">("all");
+
   const handleCreateTodo = (text: string) => {
+    if (text === "") return;
     setTodoList((prev) => [
       ...prev,
       {
@@ -40,15 +43,47 @@ function App() {
     );
   };
 
+  const handleDelete = (id: number) => {
+    setTodoList((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleDeleteAll = () => {
+    setTodoList((prev) => prev.filter((item) => !item.completed));
+  };
+
+  const handleEdit = (id: number, text: string) => {
+    setTodoList((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, text } : item))
+    );
+  };
+
+  const handleFilter = (value: "all" | "todo" | "done") => {
+    setFilter(value);
+  };
+
+  const filteredTodoList = todoList.filter((item) => {
+    if (filter === "all") return true;
+    if (filter === "todo") return !item.completed;
+    if (filter === "done") return item.completed;
+    return true;
+  });
+
   return (
     <div>
       <Layout>
         <Title />
-        <Controls onCreate={handleCreateTodo} />
+        <Controls
+          filter={filter}
+          onCreate={handleCreateTodo}
+          onFilter={handleFilter}
+        />
         <TodoList
-          data={todoList}
+          data={filteredTodoList}
           onToggle={handleToggle}
           onAllToggle={handleAllToggle}
+          onDelete={handleDelete}
+          onDeleteAll={handleDeleteAll}
+          onEdit={handleEdit}
         />
       </Layout>
     </div>
