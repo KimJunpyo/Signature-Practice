@@ -1,29 +1,40 @@
 import { useState } from "react";
 import "./TodoItem.css";
-import { TodoItemType } from "../../reducer";
+import {
+  DELETE_TODO,
+  EDIT_TODO,
+  TodoItemType,
+  TOGGLE_TODO,
+} from "../../reducer";
+import { useTodoContext } from "../../store";
 
-const TodoItem = ({
-  data,
-  onToggle,
-  onDelete,
-  onEdit,
-}: {
-  data: TodoItemType;
-  onToggle: () => void;
-  onDelete: () => void;
-  onEdit: (id: number, text: string) => void;
-}) => {
+const TodoItem = ({ data }: { data: TodoItemType }) => {
+  const { dispatch } = useTodoContext();
   const { text, completed } = data;
   const [isEdit, setIsEdit] = useState<boolean>(false);
+
   const handleEditToggle = () => {
     setIsEdit((prev) => !prev);
   };
+
   const handleEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onEdit(data.id, e.target.value);
+    dispatch({
+      type: EDIT_TODO,
+      payload: { id: data.id, text: e.target.value },
+    });
   };
+
+  const handleToggle = () => {
+    dispatch({ type: TOGGLE_TODO, payload: { id: data.id } });
+  };
+
+  const handleDelete = () => {
+    dispatch({ type: DELETE_TODO, payload: { id: data.id } });
+  };
+
   return (
     <div className="todo-item">
-      <input checked={completed} onChange={onToggle} type="checkbox" />
+      <input checked={completed} onChange={handleToggle} type="checkbox" />
 
       {isEdit ? (
         <input
@@ -36,7 +47,7 @@ const TodoItem = ({
         <p className={completed ? "completed" : ""}>{text}</p>
       )}
       <button onClick={handleEditToggle}>수정</button>
-      <button onClick={onDelete}>삭제</button>
+      <button onClick={handleDelete}>삭제</button>
     </div>
   );
 };

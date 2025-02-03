@@ -1,28 +1,27 @@
 import { useState } from "react";
 import "./Controls.css";
+import { useTodoContext } from "../../store";
+import { CREATE_TODO, FILTER_TODO } from "../../reducer";
 
-const Controls = ({
-  filter,
-  onCreate,
-  onFilter,
-}: {
-  filter: "all" | "todo" | "done";
-  onCreate: (text: string) => void;
-  onFilter: (value: "all" | "todo" | "done") => void;
-}) => {
+const Controls = () => {
   const [text, setText] = useState("");
+  const { state, dispatch } = useTodoContext();
 
   const handleChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
   };
 
   const handleSubmit = () => {
-    onCreate(text);
+    if (text === "") return;
+    dispatch({ type: CREATE_TODO, payload: { text } });
     setText("");
   };
 
   const handleChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onFilter(e.target.value as "all" | "todo" | "done");
+    dispatch({
+      type: FILTER_TODO,
+      payload: { filter: e.target.value as "all" | "todo" | "done" },
+    });
   };
 
   return (
@@ -36,7 +35,11 @@ const Controls = ({
       <button onClick={handleSubmit} className="button">
         추가
       </button>
-      <select className="select" value={filter} onChange={handleChangeFilter}>
+      <select
+        className="select"
+        value={state.filter}
+        onChange={handleChangeFilter}
+      >
         <option value="all">전체</option>
         <option value="todo">할 일</option>
         <option value="done">완료</option>
