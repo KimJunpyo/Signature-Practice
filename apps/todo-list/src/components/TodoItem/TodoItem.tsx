@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { TodoItemType } from "../../App";
 import "./TodoItem.css";
+import { TodoItemType } from "../../reducer";
 
 const TodoItem = ({
   data,

@@ -1,4 +1,4 @@
-import { TodoItemType } from "../../App";
+import { TodoItemType } from "../../reducer";
 import TodoItem from "../TodoItem/TodoItem";
 import "./TodoList.css";
 
