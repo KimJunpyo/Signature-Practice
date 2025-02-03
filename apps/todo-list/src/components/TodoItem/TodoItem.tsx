@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./TodoItem.css";
 import {
   DELETE_TODO,
   EDIT_TODO,
@@ -7,6 +6,7 @@ import {
   TOGGLE_TODO,
 } from "../../reducer";
 import { useTodoContext } from "../../store";
+import Button from "../Button/Button";
 
 const TodoItem = ({ data }: { data: TodoItemType }) => {
   const { dispatch } = useTodoContext();
@@ -33,21 +33,20 @@ const TodoItem = ({ data }: { data: TodoItemType }) => {
   };
 
   return (
-    <div className="todo-item">
+    <div className="flex gap-3 items-center p-3">
       <input checked={completed} onChange={handleToggle} type="checkbox" />
-
       {isEdit ? (
         <input
-          className="edit"
+          className="grow bg-white border border-gray-300 rounded-md text-black py-1 px-3 text-sm shrink-0"
           type="text"
           value={text}
           onChange={handleEdit}
         />
       ) : (
-        <p className={completed ? "completed" : ""}>{text}</p>
+        <p className={`grow ${completed && "line-through"}`}>{text}</p>
       )}
-      <button onClick={handleEditToggle}>수정</button>
-      <button onClick={handleDelete}>삭제</button>
+      <Button onClick={handleEditToggle}>수정</Button>
+      <Button onClick={handleDelete}>삭제</Button>
     </div>
   );
 };

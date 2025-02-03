@@ -1,7 +1,7 @@
 import { ALL_TOGGLE, DELETE_ALL_TODO } from "../../reducer";
 import { useTodoContext } from "../../store";
+import Button from "../Button/Button";
 import TodoItem from "../TodoItem/TodoItem";
-import "./TodoList.css";
 
 const TodoList = () => {
   const { state, dispatch } = useTodoContext();
@@ -32,16 +32,16 @@ const TodoList = () => {
   };
 
   return (
-    <div className="todo-list">
-      <div className="todo-header">
+    <div className="mt-5 bg-transparent border border-gray-300 rounded-md">
+      <div className="flex gap-3 items-center h-10 p-0 px-3">
         <input
           type="checkbox"
           checked={isAllCompleted}
           onChange={handleToggleAll}
         />
-        <p>할 일</p>
+        <p className="grow">할 일</p>
         {completedCount > 0 && (
-          <button onClick={handleDeleteAll}>{completedCount}개 삭제</button>
+          <Button onClick={handleDeleteAll}>{completedCount}개 삭제</Button>
         )}
       </div>
       <div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import "./Controls.css";
 import { useTodoContext } from "../../store";
 import { CREATE_TODO, FILTER_TODO } from "../../reducer";
+import Button from "../Button/Button";
 
 const Controls = () => {
   const [text, setText] = useState("");
@@ -25,18 +25,16 @@ const Controls = () => {
   };
 
   return (
-    <div className="controls">
+    <div className="flex gap-1.5">
       <input
         value={text}
         onChange={handleChangeText}
         type="text"
-        className="input"
+        className="grow bg-transparent border border-gray-300 rounded-md text-white py-1 px-3 text-sm shrink-0"
       />
-      <button onClick={handleSubmit} className="button">
-        추가
-      </button>
+      <Button onClick={handleSubmit}>추가</Button>
       <select
-        className="select"
+        className="bg-transparent border border-gray-300 rounded-md text-white p-0 px-3 shrink-0"
         value={state.filter}
         onChange={handleChangeFilter}
       >
