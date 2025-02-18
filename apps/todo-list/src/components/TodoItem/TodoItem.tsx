@@ -1,15 +1,15 @@
 import { useState } from "react";
-import {
-  DELETE_TODO,
-  EDIT_TODO,
-  TodoItemType,
-  TOGGLE_TODO,
-} from "../../reducer";
-import { useTodoContext } from "../../store";
 import Button from "../Button/Button";
+import {
+  deleteTodo,
+  editTodo,
+  TodoItemType,
+  toggleTodo,
+} from "../../store/todoSlice";
+import { useDispatch } from "react-redux";
 
 const TodoItem = ({ data }: { data: TodoItemType }) => {
-  const { dispatch } = useTodoContext();
+  const dispatch = useDispatch();
   const { text, completed } = data;
   const [isEdit, setIsEdit] = useState<boolean>(false);
 
@@ -18,18 +18,15 @@ const TodoItem = ({ data }: { data: TodoItemType }) => {
   };
 
   const handleEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({
-      type: EDIT_TODO,
-      payload: { id: data.id, text: e.target.value },
-    });
+    dispatch(editTodo({ id: data.id, text: e.target.value }));
   };
 
   const handleToggle = () => {
-    dispatch({ type: TOGGLE_TODO, payload: { id: data.id } });
+    dispatch(toggleTodo({ id: data.id }));
   };
 
   const handleDelete = () => {
-    dispatch({ type: DELETE_TODO, payload: { id: data.id } });
+    dispatch(deleteTodo({ id: data.id }));
   };
 
   return (

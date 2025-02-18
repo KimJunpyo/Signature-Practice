@@ -1,35 +1,6 @@
-import { TodoListAction, TodoListType } from "../reducer/index";
-import { createContext, useContext, useEffect, useReducer } from "react";
-import { init, initialState, reducer } from "../reducer";
+import { configureStore } from "@reduxjs/toolkit";
+import reducer from "./todoSlice";
 
-interface TodoContextProps {
-  state: TodoListType;
-  dispatch: React.Dispatch<TodoListAction>;
-}
+export const store = configureStore({ reducer: { todo: reducer } });
 
-const TodoContext = createContext<TodoContextProps | null>(null);
-
-export const useTodoContext = () => {
-  const context = useContext(TodoContext);
-  if (!context) {
-    throw new Error("Cannot find TodoProvider");
-  }
-  return context;
-};
-
-const TodoProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(reducer, initialState, init);
-
-  useEffect(() => {
-    localStorage.setItem("todoList", JSON.stringify(state.list));
-    localStorage.setItem("id", JSON.stringify(state.id));
-  }, [state]);
-
-  return (
-    <TodoContext.Provider value={{ state, dispatch }}>
-      {children}
-    </TodoContext.Provider>
-  );
-};
-
-export default TodoProvider;
+export type AppDispatch = typeof store.dispatch;

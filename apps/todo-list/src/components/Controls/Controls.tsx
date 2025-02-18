@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { useTodoContext } from "../../store";
-import { CREATE_TODO, FILTER_TODO } from "../../reducer";
 import Button from "../Button/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo, filterTodo } from "../../store/todoSlice";
 
 const Controls = () => {
   const [text, setText] = useState("");
-  const { state, dispatch } = useTodoContext();
+  const state = useSelector(
+    (state: { todo: { filter: "all" | "todo" | "done" } }) => state.todo
+  );
+  const dispatch = useDispatch();
 
   const handleChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
@@ -13,15 +16,12 @@ const Controls = () => {
 
   const handleSubmit = () => {
     if (text === "") return;
-    dispatch({ type: CREATE_TODO, payload: { text } });
+    dispatch(addTodo({ text }));
     setText("");
   };
 
   const handleChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch({
-      type: FILTER_TODO,
-      payload: { filter: e.target.value as "all" | "todo" | "done" },
-    });
+    dispatch(filterTodo({ filter: e.target.value as "all" | "todo" | "done" }));
   };
 
   return (
