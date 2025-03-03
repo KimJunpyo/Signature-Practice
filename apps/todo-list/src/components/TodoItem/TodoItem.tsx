@@ -1,24 +1,28 @@
 import { useState } from "react";
 import Button from "../Button/Button";
 import {
-  deleteTodo,
-  editTodo,
+  deleteTodos,
+  editTodos,
   TodoItemType,
   toggleTodo,
 } from "../../store/todoSlice";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
 
 const TodoItem = ({ data }: { data: TodoItemType }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { text, completed } = data;
   const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [newText, setNewText] = useState<string>(text);
 
   const handleEditToggle = () => {
+    if (isEdit) {
+      dispatch(editTodos({ id: data.id, text: newText }));
+    }
     setIsEdit((prev) => !prev);
   };
 
   const handleEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(editTodo({ id: data.id, text: e.target.value }));
+    setNewText(e.target.value);
   };
 
   const handleToggle = () => {
@@ -26,7 +30,7 @@ const TodoItem = ({ data }: { data: TodoItemType }) => {
   };
 
   const handleDelete = () => {
-    dispatch(deleteTodo({ id: data.id }));
+    dispatch(deleteTodos(data.id));
   };
 
   return (
@@ -36,7 +40,7 @@ const TodoItem = ({ data }: { data: TodoItemType }) => {
         <input
           className="grow bg-white border border-gray-300 rounded-md text-black py-1 px-3 text-sm shrink-0"
           type="text"
-          value={text}
+          value={newText}
           onChange={handleEdit}
         />
       ) : (

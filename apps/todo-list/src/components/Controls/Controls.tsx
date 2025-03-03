@@ -1,14 +1,15 @@
 import { useState } from "react";
 import Button from "../Button/Button";
-import { useDispatch, useSelector } from "react-redux";
-import { addTodo, filterTodo } from "../../store/todoSlice";
+import { useSelector } from "react-redux";
+import { filterTodo, postTodos } from "../../store/todoSlice";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
 
 const Controls = () => {
   const [text, setText] = useState("");
   const state = useSelector(
     (state: { todo: { filter: "all" | "todo" | "done" } }) => state.todo
   );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
@@ -16,7 +17,7 @@ const Controls = () => {
 
   const handleSubmit = () => {
     if (text === "") return;
-    dispatch(addTodo({ text }));
+    dispatch(postTodos(text));
     setText("");
   };
 

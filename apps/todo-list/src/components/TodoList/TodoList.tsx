@@ -1,16 +1,17 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Button from "../Button/Button";
 import TodoItem from "../TodoItem/TodoItem";
 import {
   allToggleTodo,
-  deleteAllTodo,
+  deleteAllTodos,
   TodoListType,
 } from "../../store/todoSlice";
 import { ChangeEvent } from "react";
+import { useAppDispatch } from "../../hooks/useAppDispatch";
 
 const TodoList = () => {
   const state = useSelector((state: { todo: TodoListType }) => state.todo);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const data = state.list;
   const filter = state.filter;
   const filteredTodoList = state.list.filter((item) => {
@@ -30,7 +31,7 @@ const TodoList = () => {
   };
 
   const handleDeleteAll = () => {
-    dispatch(deleteAllTodo());
+    dispatch(deleteAllTodos());
   };
 
   return (

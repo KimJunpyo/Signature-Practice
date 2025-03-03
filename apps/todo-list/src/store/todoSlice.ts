@@ -53,18 +53,51 @@ export const fetchTodos = createAsyncThunk<TodoItemType[]>(
   }
 );
 
+export const postTodos = createAsyncThunk(
+  "todos/postTodos",
+  async (text: string) => {
+    const response = await instance.post<TodoItemType>("/todos", {
+      id: Date.now(),
+      text,
+      completed: false,
+    });
+    return response.data;
+  }
+);
+
+export const editTodos = createAsyncThunk(
+  "todos/editTodos",
+  async ({ id, text }: { id: number; text: string }) => {
+    const response = await instance.patch<TodoItemType>(`/todos/${id}`, {
+      text,
+    });
+    return response.data;
+  }
+);
+
+export const deleteTodos = createAsyncThunk(
+  "todos/deleteTodos",
+  async (id: number) => {
+    await instance.delete(`/todos/${id}`);
+    return id;
+  }
+);
+
+export const deleteAllTodos = createAsyncThunk(
+  "todos/deleteAllTodos",
+  async (_, { getState }) => {
+    const state = getState() as { todo: TodoListType };
+    const ids = state.todo.list.map((item) => item.id);
+    for (const id of ids) {
+      await instance.delete(`/todos/${id}`);
+    }
+  }
+);
+
 export const todoSlice = createSlice({
   name: "todo",
   initialState,
   reducers: {
-    addTodo: (state, action) => {
-      state.list = state.list.concat({
-        id: state.id,
-        text: action.payload?.text || "",
-        completed: false,
-      });
-      state.id += 1;
-    },
     toggleTodo: (state, action) => {
       state.list = state.list.map((item) =>
         item.id === (action.payload?.id || 0)
@@ -79,40 +112,32 @@ export const todoSlice = createSlice({
         completed: action.payload?.completed || false,
       }));
     },
-    deleteTodo: (state, action) => {
-      state.list = state.list.filter(
-        (item) => item.id !== (action.payload?.id || 0)
-      );
-    },
-    deleteAllTodo: (state) => {
-      state.list = state.list.filter((item) => !item.completed);
-    },
-    editTodo: (state, action) => {
-      state.list = state.list.map((item) =>
-        item.id === action.payload.id
-          ? { ...item, text: action.payload?.text || "" }
-          : item
-      );
-    },
     filterTodo: (state, action) => {
       state.filter = action.payload?.filter || "all";
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTodos.fulfilled, (state, action) => {
-      state.list = action.payload;
-    });
+    builder
+      .addCase(fetchTodos.fulfilled, (state, action) => {
+        state.list = action.payload;
+      })
+      .addCase(postTodos.fulfilled, (state, action) => {
+        state.list.push(action.payload);
+      })
+      .addCase(editTodos.fulfilled, (state, action) => {
+        state.list = state.list.map((item) =>
+          item.id === action.payload.id ? action.payload : item
+        );
+      })
+      .addCase(deleteTodos.fulfilled, (state, action) => {
+        state.list = state.list.filter((item) => item.id === action.payload);
+      })
+      .addCase(deleteAllTodos.fulfilled, (state) => {
+        state.list = [];
+      });
   },
 });
 
-export const {
-  addTodo,
-  toggleTodo,
-  allToggleTodo,
-  deleteTodo,
-  deleteAllTodo,
-  editTodo,
-  filterTodo,
-} = todoSlice.actions;
+export const { toggleTodo, allToggleTodo, filterTodo } = todoSlice.actions;
 
 export default todoSlice.reducer;
